@@ -1,0 +1,48 @@
+<% layout('layouts/boilerPlate') %> 
+
+    <div class="row mt-5">
+        <h3 class="text-center">Edit campground</h3>
+        <div class="col-md-6 offset-3">
+            <form action="/campgrounds/<%=campground._id %>?_method=PUT" method="POST" novalidate class="validated-form form-group">
+                <div class="mb-2">
+                    <label class="form-lable" for="title">Title</label>
+                    <input class="form-control" required type="text" id="title" value="<%= campground.title %> " name="campground[title]" >
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please choose Title</div>
+                </div>
+        
+                <div class="mb-2">
+                    <label class="form-lable" for="location">Location</label>
+                    <input class="form-control" required type="text" id="location" value="<%= campground.location %> " name="campground[location]" >
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please choose Location</div>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-lable" for="image">Image</label>
+                    <input class="form-control" required type="text" id="image" value="<%= campground.image %> " name="campground[image]">
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please choose Image</div>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-lable" for="image">Image Url</label>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Ksh:</span>
+                        <input type="text" class="form-control" required value="<%= campground.price %> " aria-label="Amount (to the nearest dollar)">
+                        <span class="input-group-text">.00</span>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please choose Image URL</div>
+                      </div>
+                </div>
+
+                <div class="mb-2">
+                    <button class="btn btn-warning mt-3">Update campground</button>
+                </div>
+        
+            </form>
+            <a href="/campgrounds">All Campgrounds</a>
+        </div>
+    </div>
+    

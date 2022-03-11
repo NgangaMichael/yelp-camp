@@ -1,0 +1,22 @@
+<% layout('layouts/boilerPlate') %> 
+
+    <div class="row mt-5">
+        <div class="col-md-6 offset-3">
+        
+        <img  src="<%= campground.image %>" class="img-fluid" style="height: 15rem; width: 30rem;" alt="">
+        <h3>Camp ground show</h3>
+        <p><%= campground.title %> </p>
+        <h5><%= campground.location %> </h5>
+        <p><%= campground.description %> </p>
+        <h6>Price: Ksh/=<%= campground.price %> </h6>
+        
+        <footer>
+            <a href="/campgrounds">Go back</a> <br> <br>
+            <a href="/campgrounds/<%= campground._id %>/edit ">Edit</a> <br> <br>
+            <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+                <button class='btn btn-primary'>Delete</button> <br> <br>
+            </form>
+        </footer>
+        </div>
+    </div>
+    

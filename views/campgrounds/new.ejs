@@ -1,0 +1,39 @@
+<% layout('layouts/boilerPlate') %> 
+
+    <div class="col-md-6 offset-3">
+        <h3 class="mt-5">Add a camp ground</h3>
+        <form action="/campgrounds" method="POST" novalidate class="validated-form form-group">
+            <div>
+                <label for="title">Title</label>
+                <input class="form-control" type="text" id="title" name="campground[title]" required >
+                <div class="valid-feedback">Looks good!</div>
+                <div class="invalid-feedback">Please choose Title</div>
+            </div>
+
+            <div>
+                <label for="location">Location</label>
+                <input class="form-control" type="text" id="location" name="campground[location]" required >
+                <div class="valid-feedback">Looks good!</div>
+                <div class="invalid-feedback">Please choose Location</div>
+            </div>
+
+            <div>
+                <label for="price">Price</label>
+                <input class="form-control" id="price" name="campground[price]" required >
+                <div class="valid-feedback">Looks good!</div>
+                <div class="invalid-feedback">Please Pick Price</div>
+            </div>
+
+            <div>
+                <label for="description">Description</label>
+                <input class="form-control" type="text" id="description" name="campground[description]" required >
+                <div class="valid-feedback">Looks good!</div>
+                <div class="invalid-feedback">Please add Description</div>
+            </div>
+            <br>
+            <button class="btn btn-success">Add campground</button>
+        </form>
+    <a href="/campgrounds">Go back to all campgrounds</a>
+
+    </div>
+    
