@@ -4,12 +4,13 @@ const ejsMate = require('ejs-mate');
 const Campground = require('./models/campground');
 const app = express();
 const path = require('path');
+const Review = require('./models/review');
 const mathodOverride = require('method-override');
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 
 // server side validation middleware logic using joi the schema is a validation schema not the original schema  
-const {campgroundShema} = require('./schemas.js');
+const {campgroundShema, ReviewSchema} = require('./schemas.js');
 //database connection 
 mongoose.connect('mongodb://localhost:27017/yelpCamp', {
     // useFindAndModify: false,
@@ -30,9 +31,19 @@ app.use(express.urlencoded({extended: true}));
 app.use(mathodOverride('_method'));
 app.engine('ejs', ejsMate);
 
-// joi validation midleware 
+// joi validation midleware for camp grounds
 const campgroundValidation = (req, res, next) => {
     const {error} = campgroundShema.validate(req.body)
+    if(error) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    }
+    next()
+};
+
+// joi validation for reviews
+const reviewValidation = (req, res, next) => {
+    const {error} = ReviewSchema.validate(req.body)
     if(error) {
         const msg = error.details.map(el => el.message).join(',')
         throw new ExpressError(msg, 400)
@@ -91,6 +102,17 @@ app.delete("/campgrounds/:id", catchAsync(async (req, res) => {
     await Campground.findByIdAndDelete(id)
     res.redirect(`/campgrounds`)
 }));
+
+// reviews routes 
+app.post('/campgrounds/:id/reviews', catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+}))
+// end of reviews routes 
 
 // express error class 
 app.all('*', (req, res, next) => {
