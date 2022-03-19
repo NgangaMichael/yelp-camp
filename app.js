@@ -10,7 +10,8 @@ const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 
 // server side validation middleware logic using joi the schema is a validation schema not the original schema  
-const {campgroundShema, ReviewSchema} = require('./schemas.js');
+const {campgroundShema, reviewSchema} = require('./schemas.js');
+const review = require('./models/review');
 //database connection 
 mongoose.connect('mongodb://localhost:27017/yelpCamp', {
     // useFindAndModify: false,
@@ -41,9 +42,9 @@ const campgroundValidation = (req, res, next) => {
     next()
 };
 
-// joi validation for reviews
+// joi validation for reviews, server side validation 
 const reviewValidation = (req, res, next) => {
-    const {error} = ReviewSchema.validate(req.body)
+    const {error} = reviewSchema.validate(req.body)
     if(error) {
         const msg = error.details.map(el => el.message).join(',')
         throw new ExpressError(msg, 400)
@@ -78,7 +79,7 @@ app.post('/campgrounds', campgroundValidation, catchAsync(async (req, res) => {
 // display single camp ground 
 app.get('/campgrounds/:id', catchAsync(async (req, res) => {
     const {id} = req.params;
-    const campground = await Campground.findById(id)
+    const campground = await Campground.findById(id).populate('reviews')
     res.render('campgrounds/show', {campground})
 }));
 
@@ -104,14 +105,27 @@ app.delete("/campgrounds/:id", catchAsync(async (req, res) => {
 }));
 
 // reviews routes 
-app.post('/campgrounds/:id/reviews', catchAsync(async (req, res) => {
+// data relationship in routes 
+// creating review inside a specific camp ground 
+app.post('/campgrounds/:id/reviews', reviewValidation, catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     const review = new Review(req.body.review);
     campground.reviews.push(review);
     await review.save();
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
-}))
+}));
+
+// deleteting reviews 
+app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async(req, res) => {
+    // campground id and review id 
+    // when deleting a review, the campgroud is updated 
+    const {id, reviewId} = req.params;
+    await Campground.findByIdAndUpdate(id, {$pull: {reviews: {reviewId}}});
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/campgrounds/${id}`);
+
+}));
 // end of reviews routes 
 
 // express error class 
